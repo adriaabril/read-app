@@ -4,6 +4,9 @@
 This application allows users to upload a PDF file (such as a board game manual) and ask questions about its content.
 The app processes the document and retrieves the most relevant answer using NLP techniques and FAISS for efficient search.
 
+### Example
+![Example](https://github.com/user-attachments/assets/6f17d04b-0cd1-4a54-a864-75ac12d0dd12)
+
 ## Features
 
 - Upload PDFs: Users can upload PDF documents via a web interface.
