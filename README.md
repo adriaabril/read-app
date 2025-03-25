@@ -21,7 +21,6 @@ The app processes the document and retrieves the most relevant answer using NLP 
 
 ```
 pip install pymupdf faiss-cpu sentence-transformers flask werkzeug
-
 ```
 
 ## Running the Application
@@ -30,7 +29,6 @@ pip install pymupdf faiss-cpu sentence-transformers flask werkzeug
 ```
 git clone https://github.com/yourusername/read-app.git
 cd read-app
-
 ```
 
 - Set up a virtual environment (optional but recommended):
@@ -38,26 +36,37 @@ cd read-app
 ```
 python -m venv venv
 source venv/bin/activate  # On Windows use: venv\Scripts\activate
-
 ```
 
 - Install dependencies:
 
 ```
 pip install -r requirements.txt
-
 ```
 
 - Run the Flask app:
 
 ```
 python main.py
-
 ```
 
 - Open a web browser and go to:
 
 ```
 http://127.0.0.1:5000/
-
 ```
+
+## Usage
+### Uploading a PDF
+
+- Navigate to the Upload section of the web interface.
+
+- Select and upload a PDF file.
+
+- The system will process and extract the document's text.
+
+### Querying the PDF
+
+- Enter a query related to the uploaded document.
+
+- The system will search and return the most relevant answer based on embeddings and FAISS indexing.
