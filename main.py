@@ -1,9 +1,23 @@
 import pymupdf
 from sentence_transformers import SentenceTransformer
 import faiss
+from flask import Flask, request, jsonify, render_template
+from werkzeug.utils import secure_filename
+import os
 
-filename = "RegicideRulesA4.pdf"
+app = Flask(__name__)
+UPLOAD_FOLDER = "uploads"
+ALLOWED_EXTENSIONS = {"pdf"}
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
 model = SentenceTransformer("all-MiniLM-L6-v2")
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+#Check file extension
+def check_file_extension(file):
+    return "." in file and file.rsplit(".",1)[1].lower() in ALLOWED_EXTENSIONS
 
 #Convert PDF into blocks
 def get_text_blocks(file):
@@ -31,15 +45,43 @@ def search_manual(query, text_blocks, index, top_k=3):
     return "\n\n".join(best_matches)
 
 
-def main():
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-    text_blocks = get_text_blocks(filename)
-    index, embeddings = create_faiss_index(text_blocks)
+@app.route("/upload", methods=["POST"])
+def upload_file():
 
-    query = "How does the Jester work?"
+    if "file" not in request.files:
+        return jsonify({"error": "No file part"})
+
+    file = request.files["file"]
+    if file.filename == "" or not check_file_extension(file.filename):
+        return jsonify({"error": "Invalid file"})
+
+    filename = secure_filename(file.filename)
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    file.save(file_path)
+
+    text_blocks = get_text_blocks(file_path)
+    index, _ = create_faiss_index(text_blocks)
+
+    return jsonify({"message": "File uploaded successfully", "text_blocks": text_blocks})
+
+@app.route("/query", methods=["POST"])
+def query_pdf():
+    data = request.json
+    query = data.get("query")
+    text_blocks = data.get("text_blocks")
+
+    if not query or not text_blocks:
+        return jsonify({"error": "Missing data"})
+
+    index, _ = create_faiss_index(text_blocks)
     answer = search_manual(query, text_blocks, index)
 
-    print(answer)
+    return jsonify({"answer": answer})
 
+if __name__ == "__main__":
+    app.run(debug=True)
 
-main()

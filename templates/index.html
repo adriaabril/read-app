@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Query System</title>
+</head>
+<body>
+    <h1>Upload a PDF and Ask Questions</h1>
+
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="file-input" name="file" accept=".pdf" required>
+        <button type="submit">Upload PDF</button>
+    </form>
+
+    <h2>Ask a Question</h2>
+    <input type="text" id="query-input" placeholder="Enter your question">
+    <button id="query-button">Search</button>
+
+    <h3>Answer:</h3>
+    <p id="answer-output"></p>
+
+    <script>
+        let textBlocks = [];
+
+        document.getElementById("upload-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let formData = new FormData();
+            formData.append("file", document.getElementById("file-input").files[0]);
+
+            fetch("/upload", { method: "POST", body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.text_blocks) {
+                        textBlocks = data.text_blocks;
+                        alert("PDF uploaded successfully!");
+                    } else {
+                        alert("Error uploading PDF.");
+                    }
+                });
+        });
+
+        document.getElementById("query-button").addEventListener("click", function() {
+            let query = document.getElementById("query-input").value;
+            fetch("/query", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query: query, text_blocks: textBlocks })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("answer-output").innerText = data.answer || "No answer found.";
+            });
+        });
+    </script>
+</body>
+</html>
