@@ -73,3 +73,8 @@ http://127.0.0.1:5000/
 - Enter a query related to the uploaded document.
 
 - The system will search and return the most relevant answer based on embeddings and FAISS indexing.
+
+## Future implementations
+- Implement a database
+
+- Improve the way the text gets processed to provide more precise answers
