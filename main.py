@@ -10,7 +10,7 @@ UPLOAD_FOLDER = "uploads"
 ALLOWED_EXTENSIONS = {"pdf"}
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = SentenceTransformer("multi-qa-mpnet-base-dot-v1")
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
