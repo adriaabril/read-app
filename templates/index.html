@@ -30,15 +30,17 @@
             formData.append("file", document.getElementById("file-input").files[0]);
 
             fetch("/upload", { method: "POST", body: formData })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.text_blocks) {
-                        textBlocks = data.text_blocks;
-                        alert("PDF uploaded successfully!");
-                    } else {
-                        alert("Error uploading PDF.");
-                    }
-                });
+            .then(response => response.json())
+            .then(data => {
+                console.log("Server response:", data);  // <--- Agregar esto
+                if (data.structured_blocks) {
+                    textBlocks = data.structured_blocks;
+                    alert("PDF uploaded successfully!");
+                } else {
+                    alert("Error uploading PDF.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
         });
 
         document.getElementById("query-button").addEventListener("click", function() {
@@ -46,7 +48,7 @@
             fetch("/query", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ query: query, text_blocks: textBlocks })
+                body: JSON.stringify({ query: query, structured_blocks: textBlocks })
             })
             .then(response => response.json())
             .then(data => {
